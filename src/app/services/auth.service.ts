@@ -1,19 +1,51 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Store } from '@ngrx/store';
+import { AppState } from '../app.reducer';
+import * as authActions from '../auth/auth.actions';
+
+
 import { map } from 'rxjs/operators';
 import { Usuario } from '../models/usuario.model';
+import { Subscription } from 'rxjs';
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(public auth: AngularFireAuth, private firestore: AngularFirestore) { }
+
+  userSubscription: Subscription;
+
+  constructor(public auth: AngularFireAuth, private firestore: AngularFirestore, private store: Store<AppState>) { }
 
   initAuthListener() {
     this.auth.authState.subscribe(fuser => {
-      console.log(fuser);
+      // console.log(fuser);
+
+      if (fuser) {
+        //existe
+        this.userSubscription = this.firestore.doc(`${fuser.uid}/usuario`).valueChanges()
+          .subscribe((firestoreUser: any) => {
+            console.log("ñsñs");
+            console.log(firestoreUser);
+            // const user = Usuario.fromFirebase(firestoreUser);
+            const { email, nombre, uid } = firestoreUser;
+            const user = Usuario.fromFirebase(email, uid, nombre);
+            // this.store.dispatch(authActions.setUser({ user: user }));
+            //EMC6
+            this.store.dispatch(authActions.setUser({ user }));
+          });
+        // this.store.dispatch(authActions.setUser());
+      } else {
+        //no existe
+        this.userSubscription.unsubscribe();
+        this.store.dispatch(authActions.unSetUser());
+      }
+
     });
   }
 
@@ -21,7 +53,7 @@ export class AuthService {
     return this.auth.auth.createUserWithEmailAndPassword(email, password).then(
       ({ user }) => {
         const newUser = new Usuario(user.uid, nombre, user.email);
-        return this.firestore.doc(`${user.uid}/usuario`).set({...newUser});
+        return this.firestore.doc(`${user.uid}/usuario`).set({ ...newUser });
       }
     );
   }
