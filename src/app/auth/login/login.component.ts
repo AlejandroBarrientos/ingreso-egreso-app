@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -8,6 +8,7 @@ import * as ui from '../../shared/ui.actions';
 
 import Swal from 'sweetalert2'
 import { AuthService } from '../../services/auth.service';
+
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,20 +22,22 @@ export class LoginComponent implements OnInit, OnDestroy {
   cargando: boolean = false;
   uiSubscription: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private store: Store<AppState>, private router: Router) { }
+
+  constructor(private fb: FormBuilder,
+    private authService: AuthService,
+    private store: Store<AppState>,
+    private router: Router) { }
 
   ngOnInit() {
-    this.loginForm = this.fb.group(
-      {
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', Validators.required]
-      }
-    );
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
 
-    this.uiSubscription = this.store.select("ui")
+    this.uiSubscription = this.store.select('ui')
       .subscribe(ui => {
         this.cargando = ui.isLoading;
-        console.log('cargando subs');
+        // console.log('cargando subs');
       });
 
   }
@@ -43,37 +46,38 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.uiSubscription.unsubscribe();
   }
 
-  loginUsuario() {
+  login() {
 
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) { return; }
 
     this.store.dispatch(ui.isLoading());
 
+
     // Swal.fire({
     //   title: 'Espere por favor',
-    //   didOpen: () => {
+    //   onBeforeOpen: () => {
     //     Swal.showLoading()
     //   }
     // });
 
     const { email, password } = this.loginForm.value;
 
-    this.authService.loginUsuario(email, password).then(
-      credenciales => {
+    this.authService.loginUsuario(email, password)
+      .then(credenciales => {
+        console.log(credenciales);
         // Swal.close();
         this.store.dispatch(ui.stopLoading());
         this.router.navigate(['/']);
-      }
-    ).catch(err => {
-      this.store.dispatch(ui.stopLoading());
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: err.message
       })
-    });
+      .catch(err => {
+        this.store.dispatch(ui.stopLoading());
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: err.message
+        })
+      });
+
   }
 
 }

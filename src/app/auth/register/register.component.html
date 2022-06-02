@@ -9,7 +9,9 @@
 
                         <div class="form-group">
                             <div class="input-group">
+
                                 <input type="text" class="form-control" formControlName="nombre" placeholder="Nombre">
+
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i *ngIf="registroForm.get('nombre').valid" class="fa fa-check-circle"></i>
@@ -20,7 +22,9 @@
 
                         <div class="form-group">
                             <div class="input-group">
+
                                 <input type="email" class="form-control" formControlName="correo" placeholder="Correo">
+
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i *ngIf="registroForm.get('correo').valid" class="fa fa-check-circle"></i>
@@ -31,8 +35,10 @@
 
                         <div class="form-group">
                             <div class="input-group">
+
                                 <input type="password" class="form-control" formControlName="password"
                                     placeholder="Password">
+
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i *ngIf="registroForm.get('password').valid" class="fa fa-check-circle"></i>
@@ -41,20 +47,26 @@
                             </div>
                         </div>
 
+
                         <div class="form-group">
                             <button type="submit" [disabled]="registroForm.invalid"
-                                class="btn btn-primary submit-btn btn-block" *ngIf="!cargando">Crear cuenta</button>
+                                class="btn btn-primary submit-btn btn-block" *ngIf="!cargando">
+                                Crear cuenta
+                            </button>
+
                             <button type="button" [disabled]="true" class="btn btn-primary submit-btn btn-block"
                                 *ngIf="cargando">
                                 <i class="fa fa-spin fa-sync"></i>
                                 Espere...
                             </button>
                         </div>
+
                         <div class="text-block text-center my-3">
                             <span class="text-small font-weight-semibold">ya tienes una cuenta?</span>
                             <br>
                             <a routerLink="/login" class="text-black text-small">Login</a>
                         </div>
+
                     </form>
                 </div>
             </div>
