@@ -22,7 +22,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   cargando: boolean = false;
   uiSubscription: Subscription;
 
-
   constructor(private fb: FormBuilder,
     private authService: AuthService,
     private store: Store<AppState>,
@@ -30,9 +29,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['alejandro_barrientos@hotmail.com', [Validators.required, Validators.email]],
-      password: ['123456', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
     });
+    
 
     this.uiSubscription = this.store.select('ui')
       .subscribe(ui => {
